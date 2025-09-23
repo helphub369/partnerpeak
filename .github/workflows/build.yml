@@ -2,24 +2,32 @@ name: Build and Deploy PartnerPeak
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-
-      - name: Upload site
-        uses: actions/upload-pages-artifact@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          path: .  # root folder of your site
+          python-version: '3.x'
+
+      - name: Build site
+        run: |
+          python scripts/build_site.py
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
 
   deploy:
     needs: build
@@ -33,4 +41,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
