@@ -1,1 +1,53 @@
-<!doctype html><title>Partners</title><div id='list'></div><script>fetch('/data/partners.json').then(r=>r.json()).then(d=>{document.getElementById('list').innerHTML=d.map(p=>`<div><a href='/partners/${p.program_name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.html'>${p.program_name}</a></div>`).join('')})</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partners - PartnerPeak</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header>
+    <h1>Our Partners</h1>
+    <nav>
+      <a href="../index.html">Home</a>
+      <a href="../disclosure.html">Disclosure</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2>Active Affiliate Programs</h2>
+      <ul id="partners-list"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 PartnerPeak — All rights reserved.</p>
+  </footer>
+
+  <script>
+    async function loadPartners() {
+      try {
+        const response = await fetch("../data/partners.json");
+        const partners = await response.json();
+        const list = document.getElementById("partners-list");
+        list.innerHTML = "";
+        partners.forEach(p => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <strong>${p.name}</strong> — ${p.category} <br>
+            <a href="${p.url}" target="_blank">Visit Partner</a>
+          `;
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error("Error loading partners:", err);
+        document.getElementById("partners-list").innerHTML =
+          "<li>Failed to load partners.</li>";
+      }
+    }
+    loadPartners();
+  </script>
+</body>
+</html>
