@@ -1,1 +1,60 @@
-body{font-family:system-ui} .wrap{max-width:980px;margin:24px auto}
+/* PartnerPeak Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+header {
+  background: #1e293b;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  color: #38bdf8;
+  margin: 0;
+}
+
+nav a {
+  margin: 0 10px;
+  color: #f1f5f9;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: #38bdf8;
+}
+
+main {
+  padding: 2rem;
+  text-align: center;
+}
+
+h2 {
+  color: #38bdf8;
+}
+
+.button, a.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #38bdf8;
+  color: #0f172a;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #1e293b;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
