@@ -1,0 +1,42 @@
+[
+  {
+    "program_name": "Acme Cyber SaaS",
+    "verticals": [
+      "cybersecurity",
+      "saas"
+    ],
+    "mechanism": "referral link",
+    "automation_score": 5,
+    "payout_model": "recurring",
+    "typical_payout_range": "$200\u2013$1500",
+    "geo_coverage": "global",
+    "approval_friction": "light",
+    "conversion_reporting": {
+      "type": "api",
+      "docs_url": "https://docs.example.com/acme"
+    },
+    "deep_link_template": "https://acme.example.com/?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
+    "risk_flags": [],
+    "source_url": "https://acme.example.com/partners"
+  },
+  {
+    "program_name": "Zen Data Feeds",
+    "verticals": [
+      "data_feeds",
+      "saas"
+    ],
+    "mechanism": "API key + referral",
+    "automation_score": 4,
+    "payout_model": "recurring",
+    "typical_payout_range": "$300\u2013$1200",
+    "geo_coverage": "Tier 1",
+    "approval_friction": "light",
+    "conversion_reporting": {
+      "type": "api",
+      "docs_url": "https://docs.example.com/zen"
+    },
+    "deep_link_template": "https://zen.example.com/signup?ref={AFF_ID}&click={CLICK_ID}&redirect={URLENCODED_DEST}",
+    "risk_flags": [],
+    "source_url": "https://zen.example.com/affiliate"
+  }
+]

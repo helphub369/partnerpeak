@@ -1,0 +1,1 @@
+<!doctype html><title>Partners</title><div id='list'></div><script>fetch('/data/partners.json').then(r=>r.json()).then(d=>{document.getElementById('list').innerHTML=d.map(p=>`<div><a href='/partners/${p.program_name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.html'>${p.program_name}</a></div>`).join('')})</script>
