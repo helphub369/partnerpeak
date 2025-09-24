@@ -1,123 +1,100 @@
-<script>
-// PartnerPeak: browser-side renderer for GitHub Pages
+// Render partner catalog with filters/sort from data/partners.json
+const state = { partners: [], filtered: [] };
 
-(async () => {
-  // Compute a safe relative URL for GitHub Pages (repo subfolder)
-  const base = location.pathname.endsWith('/')
-    ? location.pathname
-    : location.pathname.replace(/[^/]+$/, '/');
-  const dataURL = new URL('data/partners.json', base).toString();
+function $(id) { return document.getElementById(id); }
 
-  // Small helpers
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+function renderGrid(list) {
+  const grid = $("partner-grid");
+  grid.innerHTML = "";
 
-  // Where to print errors (without breaking the page)
-  function toast(msg) {
-    console.warn('[PartnerPeak]', msg);
+  if (!list.length) {
+    grid.innerHTML = `<div class="partner-card"><div class="partner-meta">No results. Adjust filters.</div></div>`;
+    return;
   }
 
-  // Fetch dataset
-  let partners = [];
-  try {
-    const res = await fetch(dataURL, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    partners = await res.json();
-    if (!Array.isArray(partners)) throw new Error('partners.json is not an array');
-  } catch (err) {
-    toast(`Could not load partners.json at ${dataURL}: ${err.message}`);
-    return; // stop here; we can’t render
-  }
+  list.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "partner-card";
+    const payouts = p.typical_payout_range || "Varies";
+    const automation = p.automation_score != null ? `${p.automation_score}/5` : "—";
+    const regions = (p.regions || []).join(" · ") || "—";
+    const verticals = (p.verticals || []).join(", ");
 
-  // Basic stats
-  const total = partners.length;
-  const regions = {
-    us: 0, eu: 0, uk: 0, apac: 0
-  };
-
-  // Region guesser (from geo_coverage text)
-  function bucketByRegion(partner) {
-    const cov = (partner.geo_coverage || '').toLowerCase();
-    if (/global/.test(cov)) {
-      regions.us++; regions.eu++; regions.uk++; regions.apac++;
-      return;
-    }
-    if (/us|united states|north america|na/.test(cov)) regions.us++;
-    if (/(eu|europe(?!.*uk))/.test(cov)) regions.eu++;
-    if (/\buk\b|\bunited kingdom\b/.test(cov)) regions.uk++;
-    if (/apac|asia|pacific|australia|nz/.test(cov)) regions.apac++;
-  }
-
-  partners.forEach(bucketByRegion);
-
-  // Category/verticals
-  const catSet = new Set();
-  partners.forEach(p => {
-    (p.verticals || []).forEach(v => catSet.add(String(v).toLowerCase()));
+    card.innerHTML = `
+      <div class="partner-title">${p.program_name}</div>
+      <div class="partner-meta">Verticals: ${verticals}</div>
+      <div class="partner-meta">Model: ${p.payout_model || "—"} · Automation: ${automation}</div>
+      <div class="partner-meta">Regions: ${regions}</div>
+      <div class="partner-payout">Payout: ${payouts}</div>
+      <div class="badges">
+        ${p.api_ready ? `<span class="badge ok">API-ready</span>` : `<span class="badge">Manual</span>`}
+        ${p.conversion_reporting?.type ? `<span class="badge">${p.conversion_reporting.type.toUpperCase()} reporting</span>` : ""}
+        <span class="badge">Low-risk</span>
+      </div>
+      <a class="partner-link" href="${p.source_url}" rel="noopener" target="_blank">View Program</a>
+    `;
+    grid.appendChild(card);
   });
+}
 
-  // Coverage (rough heuristic)
-  const coverage = Math.min(
-    100,
-    Math.round((Object.values(regions).reduce((a,b)=>a+b,0) / (4 * Math.max(1,total))) * 100)
-  );
+function applyFilters() {
+  const q = $("q").value.trim().toLowerCase();
+  const region = $("region").value;
+  const vertical = $("vertical").value;
+  const sortBy = $("sort").value;
 
-  // Update counters IF page has these ids. We won’t crash if they’re missing.
-  const map = [
-    ['#stat-total', total],
-    ['#stat-us', regions.us],
-    ['#stat-eu', regions.eu],
-    ['#stat-uk', regions.uk],
-    ['#stat-apac', regions.apac],
-    ['#stat-cats', catSet.size],
-    ['#stat-coverage', coverage + '%'],
-  ];
-  map.forEach(([sel, val]) => { const n = $(sel); if (n) n.textContent = val; });
+  let out = [...state.partners];
 
-  // Render a grid of partners if a mount exists
-  // Add an element like: <div id="partners-grid"></div> on /partners page
-  const grid = $('#partners-grid');
-  if (grid) {
-    grid.innerHTML = partners.map(p => {
-      const verts = (p.verticals || []).join(' • ');
-      const payout = p.typical_payout_range || '';
-      const model = p.payout_model || '';
-      const autom = (p.automation_score != null) ? `Automation: ${p.automation_score}/5` : '';
-      const doc = p.conversion_reporting?.docs_url || p.source_url || '#';
-      return `
-        <article class="pp-card">
-          <div class="pp-card__header">
-            <h3>${p.program_name || 'Program'}</h3>
-            ${verts ? `<span class="pp-chip">${verts}</span>` : ''}
-          </div>
-          <div class="pp-card__body">
-            <div class="pp-meta"><strong>${model}</strong>${payout ? ` • ${payout}` : ''}</div>
-            <div class="pp-meta">${p.geo_coverage || ''}</div>
-            <div class="pp-meta">${autom}</div>
-          </div>
-          <div class="pp-card__footer">
-            <a class="pp-btn" href="${doc}" target="_blank" rel="noopener">Docs / Program</a>
-          </div>
-        </article>
-      `;
-    }).join('');
-
-    // Tiny styles if your CSS doesn’t have them yet
-    if (!$('#pp-inline-style')) {
-      const style = document.createElement('style');
-      style.id = 'pp-inline-style';
-      style.textContent = `
-        #partners-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
-        .pp-card { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; }
-        .pp-card__header { display:flex; align-items:center; gap:8px; justify-content:space-between; }
-        .pp-card h3 { margin:0; font-size:1.05rem; }
-        .pp-chip { font-size:.75rem; opacity:.85; border:1px solid rgba(255,255,255,0.15); padding:2px 8px; border-radius:999px; }
-        .pp-meta { opacity:.85; margin-top:6px; font-size:.9rem; }
-        .pp-btn { display:inline-block; padding:8px 12px; border-radius:8px; background:#1f6feb; color:#fff; text-decoration:none; }
-        .pp-btn:hover { filter:brightness(1.1); }
-      `;
-      document.head.appendChild(style);
-    }
+  if (q) {
+    out = out.filter(p =>
+      p.program_name?.toLowerCase().includes(q) ||
+      (p.verticals || []).some(v => (v + "").toLowerCase().includes(q))
+    );
   }
-})();
-</script>
+  if (region) {
+    out = out.filter(p => (p.regions || []).includes(region));
+  }
+  if (vertical) {
+    out = out.filter(p => (p.verticals || []).includes(vertical));
+  }
+
+  // Sort
+  if (sortBy === "automation") out.sort((a,b) => (b.automation_score||0)-(a.automation_score||0));
+  else if (sortBy === "payout")   out.sort((a,b) => (b.payout_rank||0)-(a.payout_rank||0));
+  else out.sort((a,b) => (a.rank||999)-(b.rank||999));
+
+  state.filtered = out;
+  renderGrid(out);
+}
+
+async function init() {
+  try {
+    const res = await fetch("../data/partners.json", { cache: "no-store" });
+    const data = await res.json();
+    state.partners = data;
+
+    // Populate vertical dropdown
+    const set = new Set();
+    data.forEach(p => (p.verticals || []).forEach(v => set.add(v)));
+    const vSel = $("vertical");
+    [...set].sort().forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v; opt.textContent = v;
+      vSel.appendChild(opt);
+    });
+
+    // Events
+    ["q","region","vertical","sort"].forEach(id => $(id).addEventListener("input", applyFilters));
+    $("clear").addEventListener("click", () => {
+      $("q").value = ""; $("region").value = ""; $("vertical").value = ""; $("sort").value = "rank";
+      applyFilters();
+    });
+
+    applyFilters();
+  } catch (e) {
+    console.error("Failed to load partners:", e);
+    renderGrid([]);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", init);
