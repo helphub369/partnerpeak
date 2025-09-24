@@ -1,126 +1,85 @@
-/* PartnerPeak — partners directory UI
-   - Loads /data/partners.json
-   - Facets: category chips, region filter, search, sort
-   - Safeguards against missing fields
-*/
+// scripts/partners.js — robust loader that works on GitHub Pages subfolders
 
-(async function () {
-  const grid = byId('pp-grid');
-  const countEl = byId('pp-count');
-  const catsEl = byId('pp-cats');
-  const qEl = byId('pp-search');
-  const regionEl = byId('pp-region');
-  const sortEl = byId('pp-sort');
+(async () => {
+  // Always resolve relative to the current page (works for /partnerpeak/)
+  const partnersURL = new URL('./data/partners.json', window.location.href);
 
-  let all = [];
-  try {
-    const res = await fetch('../data/partners.json', { cache: 'no-store' });
-    all = await res.json();
-  } catch (e) {
-    grid.innerHTML = `<div class="pp-muted">Couldn’t load partners.json</div>`;
-    return;
+  async function loadPartners() {
+    const res = await fetch(partnersURL.toString(), { cache: 'no-store' });
+    if (!res.ok) {
+      throw new Error(`Failed to load ${partnersURL} → ${res.status} ${res.statusText}`);
+    }
+    const text = await res.text();
+    try {
+      const data = JSON.parse(text);
+      if (!Array.isArray(data)) throw new Error('partners.json must be an array []');
+      return data;
+    } catch (e) {
+      console.error('Invalid JSON in partners.json:', e);
+      throw e;
+    }
   }
 
-  // Normalize + derive helpers
-  all = (all || []).map(p => ({
-    name: (p.name || '').trim(),
-    category: (p.category || 'Other').trim(),
-    region: (p.region || 'Global').trim(),
-    payout: (p.payout || '').trim(),
-    model: (p.model || '').trim(),
-    risk: (p.risk || 'Low').trim(),
-    url: (p.url || '#').trim()
-  })).filter(p => p.name);
+  // helpers
+  const $ = (s) => document.querySelector(s);
+  const setText = (s, v) => { const el = $(s); if (el) el.textContent = v; };
+  const fmt = (n) => Intl.NumberFormat('en-US').format(n || 0);
 
-  // Build category chips (from data)
-  const categories = [...new Set(all.map(p => p.category))].sort();
-  let activeCat = ''; // all
-  catsEl.innerHTML = [
-    chipHtml('All', ''),
-    ...categories.map(c => chipHtml(c, c))
-  ].join('');
-  catsEl.addEventListener('click', (e) => {
-    const btn = e.target.closest('.pp-chip');
-    if (!btn) return;
-    activeCat = btn.dataset.cat || '';
-    [...catsEl.querySelectorAll('.pp-chip')].forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    render();
-  });
-  // Set “All” active by default
-  const first = catsEl.querySelector('.pp-chip[data-cat=""]');
-  if (first) first.classList.add('active');
+  function hydrateKPIs(list) {
+    setText('[data-kpi="total-programs"]', fmt(list.length));
 
-  // Wire search / filters
-  qEl.addEventListener('input', debounce(render, 120));
-  regionEl.addEventListener('change', render);
-  sortEl.addEventListener('change', render);
+    const countBy = (pred) => list.filter(pred).length;
+    const hasRegion = (key) =>
+      countBy(p => (p.region || '').toUpperCase().includes(key));
 
-  render();
+    setText('[data-kpi="us"]',   fmt(hasRegion('US')));
+    setText('[data-kpi="eu"]',   fmt(hasRegion('EU')));
+    setText('[data-kpi="uk"]',   fmt(hasRegion('UK')));
+    setText('[data-kpi="apac"]', fmt(hasRegion('APAC')));
 
-  function render() {
-    const q = qEl.value.trim().toLowerCase();
-    const region = regionEl.value;
+    const cats = new Set(list.map(p => (p.category || '').trim()).filter(Boolean));
+    setText('[data-kpi="categories"]', fmt(cats.size));
 
-    let rows = all.filter(p =>
-      (!activeCat || p.category === activeCat) &&
-      (!region || p.region === region) &&
-      (!q || (
-        p.name.toLowerCase().includes(q) ||
-        p.model.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q)
-      ))
-    );
-
-    // Sort
-    const key = sortEl.value;
-    rows.sort((a, b) => {
-      if (key === 'payout') {
-        // heuristic: pull leading number for desc sort
-        const pa = parseFloat((a.payout.match(/[\d.]+/g) || [0])[0]);
-        const pb = parseFloat((b.payout.match(/[\d.]+/g) || [0])[0]);
-        return pb - pa;
-      }
-      if (key === 'category') return a.category.localeCompare(b.category);
-      return a.name.localeCompare(b.name);
-    });
-
-    countEl.textContent = rows.length.toString();
-    grid.innerHTML = rows.map(card).join('') || emptyHtml();
+    const globalish = countBy(p => /global/i.test(p.region || ''));
+    const pct = list.length ? Math.round((globalish / list.length) * 100) : 0;
+    setText('[data-kpi="global-pct"]', `${pct}%`);
   }
 
-  // Card template
-  function card(p) {
-    return `
-      <article class="pp-card">
-        <div class="pp-name">${esc(p.name)}</div>
-        <div class="pp-meta">
-          <span class="pp-badge">${esc(p.category)}</span>
-          <span class="pp-badge">${esc(p.region)}</span>
-          <span class="pp-badge">${esc(p.payout || 'Payout varies')}</span>
-          <span class="pp-badge">Risk: ${esc(p.risk)}</span>
+  function renderPartnerList(list) {
+    const wrap = $('#partners-list');
+    if (!wrap) return;
+
+    if (!list.length) {
+      wrap.innerHTML = `<div class="empty">No programs yet.</div>`;
+      return;
+    }
+
+    wrap.innerHTML = list.map(p => `
+      <article class="partner">
+        <div class="partner__head">
+          <h3>${p.name || 'Unnamed Program'}</h3>
+          <span class="badge">${(p.risk || 'Low')}</span>
         </div>
-        <div class="pp-muted">${esc(p.model || '')}</div>
-        <div class="pp-cta">
-          <a href="${escUrl(p.url)}" target="_blank" rel="nofollow noopener">Program details</a>
-          <span class="pp-muted">Always include FTC disclosure on affiliate links</span>
+        <div class="partner__meta">
+          <span>${p.category || 'Uncategorized'}</span>
+          <span>${p.region || 'Region: n/a'}</span>
+          <span>${p.payout || 'Payout: n/a'}</span>
         </div>
+        ${p.url ? `<a class="btn" href="${p.url}" target="_blank" rel="nofollow noopener">Program</a>` : ``}
       </article>
-    `;
+    `).join('');
   }
 
-  function chipHtml(label, value) {
-    return `<button class="pp-chip" data-cat="${escAttr(value)}">${esc(label)}</button>`;
+  try {
+    const partners = await loadPartners();
+    hydrateKPIs(partners);
+    renderPartnerList(partners);
+    console.log(`Loaded ${partners.length} partners from`, partnersURL.toString());
+  } catch (err) {
+    console.error(err);
+    const notice = document.createElement('div');
+    notice.style.cssText = 'position:fixed;bottom:10px;left:10px;background:#c0392b;color:#fff;padding:8px 12px;border-radius:8px;font:14px system-ui;z-index:9999';
+    notice.textContent = 'Failed to load partners.json. Open console for details.';
+    document.body.appendChild(notice);
   }
-
-  function emptyHtml() {
-    return `<div class="pp-muted">No programs match your filters. Try clearing a filter or searching a different term.</div>`;
-  }
-
-  // Utils
-  function byId(id){ return document.getElementById(id) }
-  function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
-  function escAttr(s){ return esc(s).replace(/"/g, '&quot;') }
-  function escUrl(s){ return esc(s) }
-  function debounce(fn, wait=150){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn.apply(null,a),wait)} }
 })();
