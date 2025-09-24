@@ -7,48 +7,55 @@
 <meta name="description" content="PartnerPeak connects audiences to high-ticket, automation-friendly partners with full FTC/GDPR compliance and geo-policing."/>
 <style>
 :root{
-  --bg:#0b1020; --bg-soft:#0e1426; --panel:#0b1220; --glass:rgba(255,255,255,.04);
-  --border:#1f2a44; --text:#e6ebf5; --muted:#9fb2cc; --brand:#38bdf8; --brand-2:#7c3aed;
+  --bg:#0b1020; --bg2:#0d1428; --panel:#0b1220; --glass:rgba(255,255,255,.04);
+  --border:#1f2a44; --text:#e6ebf5; --muted:#9fb2cc; --brand:#7aa2ff; --brand2:#38bdf8;
   --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box} html,body{height:100%}
 body{margin:0;font-family:Inter, ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  color:var(--text);background:radial-gradient(1100px 700px at 10% -10%,#102045 0%,transparent 60%),
-  radial-gradient(800px 600px at 110% -20%,#281a5a 0%,transparent 50%), var(--bg);}
-a{color:inherit}
+  color:var(--text);background:
+  radial-gradient(1000px 700px at -10% -10%,#182a5a77 0%,transparent 60%),
+  radial-gradient(900px 600px at 110% -20%,#3a1a7a66 0%,transparent 50%),
+  linear-gradient(180deg,var(--bg),var(--bg2));}
+a{color:inherit;text-decoration:none}
 .container{max-width:1200px;margin:0 auto;padding:0 20px}
 .nav{position:sticky;top:0;z-index:40;background:linear-gradient(180deg, rgba(11,16,32,.9), rgba(11,16,32,.6));
   backdrop-filter: blur(8px); border-bottom:1px solid var(--border)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
 .brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:1.2rem;letter-spacing:.2px;color:var(--brand)}
-.brand .logo{width:28px;height:28px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:var(--shadow)}
-.menu a{opacity:.9;margin-left:18px;text-decoration:none}
-.menu a:hover{color:var(--brand)}
-.hero{padding:70px 0 40px;border-bottom:1px solid var(--border)}
+.brand .logo{width:28px;height:28px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:var(--shadow)}
+.menu a{opacity:.9;margin-left:18px}
+.menu a:hover{color:var(--brand2)}
+.hero{padding:70px 0 30px;border-bottom:1px solid var(--border)}
 .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center}
 .h-badge{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:var(--glass);color:var(--muted);font-size:.85rem}
 h1{font-size:clamp(2rem,3.6vw,3rem);line-height:1.1;margin:12px 0;background:linear-gradient(135deg,#e6ebf5 0%, #a8c5ff 50%, #9d8cff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lead{color:var(--muted);font-size:1.05rem;margin-top:6px}
 .cta{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap}
 .btn{border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
-.btn-primary{background:linear-gradient(135deg,var(--brand),#5eead4);color:#071019;box-shadow:var(--shadow)}
+.btn-primary{background:linear-gradient(135deg,var(--brand2),#5eead4);color:#071019;box-shadow:var(--shadow)}
 .btn-ghost{background:var(--glass);border:1px solid var(--border);color:var(--text)}
 .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));border:1px solid var(--border);
   border-radius:14px;padding:18px;box-shadow:var(--shadow)}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
 .kpi h3{margin:0;font-size:1.8rem}
 .kpi p{margin:6px 0 0;color:var(--muted)}
-.section{padding:48px 0;border-bottom:1px solid var(--border)}
+.section{padding:44px 0;border-bottom:1px solid var(--border)}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.feature h4{margin:10px 0 6px}
-.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.badge{font-size:.8rem;border:1px solid var(--border);background:var(--glass);border-radius:999px;padding:6px 10px;color:var(--muted)}
-.footer{padding:24px 0;color:var(--muted)}
 .preview{aspect-ratio:4/3;border-radius:14px;border:1px solid var(--border);background:
   radial-gradient(600px 280px at 70% 0%, rgba(124,58,237,.28), transparent 60%),
   radial-gradient(700px 300px at -10% 110%, rgba(56,189,248,.25), transparent 60%),
   #0a0f1e;box-shadow:var(--shadow)}
-@media (max-width:980px){.hero-inner{grid-template-columns:1fr}.grid-3,.kpis{grid-template-columns:1fr}}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.badge{font-size:.8rem;border:1px solid var(--border);background:var(--glass);border-radius:999px;padding:6px 10px;color:var(--muted)}
+footer{padding:24px 0;color:var(--muted)}
+/* Live stats row */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.stat{border:1px solid var(--border);border-radius:14px;background:var(--glass);padding:14px}
+.stat .num{font-weight:800;font-size:1.6rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:var(--glass);font-size:.85rem}
+@media (max-width:980px){.hero-inner{grid-template-columns:1fr}.grid-3,.kpis,.stats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -67,64 +74,139 @@ h1{font-size:clamp(2rem,3.6vw,3rem);line-height:1.1;margin:12px 0;background:lin
   <header class="hero">
     <div class="container hero-inner">
       <div>
-        <div class="h-badge">Automation-first • Global</div>
-        <h1>Zero-Touch Referral Engine for High-Ticket Programs</h1>
-        <p class="lead">Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time link health—engineered to run on autopilot.</p>
+        <div class="h-badge">Automation-first • Global • Low Risk</div>
+        <h1>Zero-Touch Referral Engine for High-Ticket SaaS & Business Tools</h1>
+        <p class="lead">Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates—engineered to run on autopilot.</p>
         <div class="cta">
           <a class="btn btn-primary" href="partners/">Explore Partners</a>
           <a class="btn btn-ghost" href="disclosure.html">Compliance & Policies</a>
         </div>
+
+        <!-- KPI cards (static captions / dynamic numbers) -->
         <div class="kpis">
-          <div class="card kpi"><h3 id="kpiPartners">—</h3><p>Programs in catalog</p></div>
-          <div class="card kpi"><h3>Tier-1</h3><p>US • UK • EU • SG • AE • AU • NZ</p></div>
-          <div class="card kpi"><h3>100% API-ready</h3><p>Automation-friendly focus</p></div>
+          <div class="card kpi"><h3 id="kpiPrograms">—</h3><p>Programs in catalog</p></div>
+          <div class="card kpi"><h3 id="kpiCategories">—</h3><p>Categories covered</p></div>
+          <div class="card kpi"><h3 id="kpiGlobal">—</h3><p>Global coverage</p></div>
         </div>
       </div>
-      <div class="preview card"></div>
+
+      <div class="preview card">
+        <!-- Live stat chips -->
+        <div class="stats">
+          <div class="stat">
+            <div class="num" id="statUS">—</div>
+            <div class="label">US-ready</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="statEU">—</div>
+            <div class="label">EU-ready</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="statUK">—</div>
+            <div class="label">UK-ready</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="statAPAC">—</div>
+            <div class="label">APAC-ready</div>
+          </div>
+        </div>
+        <div class="chips" id="topCats"></div>
+      </div>
     </div>
   </header>
 
   <section class="section">
     <div class="container">
       <div class="grid-3">
-        <div class="card feature">
+        <div class="card">
           <div class="badge">Monetization Layer</div>
-          <h4>Smart Link Builder</h4>
+          <h3>Smart Link Builder</h3>
           <p class="lead">Signed deep links, disclosure injection, geo rules, and auto-failover when a partner 404s.</p>
         </div>
-        <div class="card feature">
+        <div class="card">
           <div class="badge">Compliance</div>
-          <h4>FTC • GDPR • Sanctions</h4>
-          <p class="lead">Inline disclosures, consent awareness, OFAC screening & region-based suppression.</p>
+          <h3>FTC • GDPR • Sanctions</h3>
+          <p class="lead">Inline disclosures, consent awareness, and region-based suppression. Low-risk verticals only.</p>
         </div>
-        <div class="card feature">
+        <div class="card">
           <div class="badge">Self-Healing</div>
-          <h4>Health & Ranking</h4>
+          <h3>Health & Ranking</h3>
           <p class="lead">Demote failing programs, elevate top EPC by region, and log postbacks to a ledger.</p>
         </div>
       </div>
 
       <div class="badges">
-        <span class="badge">High-ticket only</span>
-        <span class="badge">No low-EPC retail</span>
+        <span class="badge">High-ticket SaaS</span>
+        <span class="badge">Global Tier-1</span>
         <span class="badge">API/Webhook reporting</span>
-        <span class="badge">Global tiering</span>
+        <span class="badge">Low risk baseline</span>
       </div>
     </div>
   </section>
 
-  <footer class="footer container">© 2025 PartnerPeak — Built for automated affiliate growth.</footer>
+  <footer class="container">© 2025 PartnerPeak — Built for automated affiliate growth.</footer>
 
   <script>
+    // Pull live stats from /data/partners.json and populate KPIs + chips
     (async () => {
       try {
-        const res = await fetch('data/partners.json', {cache:'no-store'});
-        if (res.ok) {
-          const partners = await res.json();
-          document.getElementById('kpiPartners').textContent = partners.length.toLocaleString();
-        }
-      } catch(e){}
+        const res = await fetch('data/partners.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const items = await res.json();
+        if (!Array.isArray(items)) return;
+
+        // Normalize
+        const rows = items.map(p => ({
+          name: (p.name||'').trim(),
+          category: (p.category||'Other').trim(),
+          region: (p.region||'Global').trim(),
+          payout: (p.payout||'').trim(),
+          risk: (p.risk||'Low').trim()
+        })).filter(p => p.name);
+
+        // Totals
+        const total = rows.length;
+        const cats = [...new Set(rows.map(r => r.category))];
+        const isGlobal = rows.filter(r => /global/i.test(r.region)).length;
+
+        // Region heuristics (counts that match tag presence)
+        const has = (r, tag) => new RegExp(`\\b${tag}\\b`, 'i').test(r.region);
+        const countUS   = rows.filter(r => has(r,'US') || /Global/i.test(r.region)).length;
+        const countEU   = rows.filter(r => has(r,'EU') || /Global/i.test(r.region)).length;
+        const countUK   = rows.filter(r => has(r,'UK') || /Global/i.test(r.region)).length;
+        const countAPAC = rows.filter(r => has(r,'APAC') || /Global/i.test(r.region)).length;
+
+        // Top categories by count
+        const catCounts = {};
+        rows.forEach(r => { catCounts[r.category] = (catCounts[r.category]||0)+1; });
+        const top = Object.entries(catCounts)
+          .sort((a,b)=>b[1]-a[1])
+          .slice(0,6);
+
+        // Fill KPIs
+        setTxt('kpiPrograms', total.toLocaleString());
+        setTxt('kpiCategories', cats.length.toLocaleString());
+        setTxt('kpiGlobal', `${Math.round((isGlobal/Math.max(total,1))*100)}%`);
+
+        // Side stats
+        setTxt('statUS', countUS);
+        setTxt('statEU', countEU);
+        setTxt('statUK', countUK);
+        setTxt('statAPAC', countAPAC);
+
+        // Top category chips
+        const chips = top.map(([label,count]) => `<span class="chip">${esc(label)} • ${count}</span>`).join('');
+        byId('topCats').innerHTML = chips;
+
+      } catch(e) {
+        // Fail silently (keeps page pretty even if JSON missing)
+      }
     })();
+
+    // utils
+    function byId(id){ return document.getElementById(id); }
+    function setTxt(id, v){ const el = byId(id); if(el) el.textContent = v; }
+    function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   </script>
 </body>
 </html>
