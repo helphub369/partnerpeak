@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PartnerPeak – Explore Partners</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PartnerPeak — Explore Partners</title>
+  <link rel="stylesheet" href="../assets/style.css"/>
 </head>
 <body>
   <header>
-    <div class="logo">PartnerPeak</div>
+    <div class="brand">
+      <div class="logo-dot"></div>
+      <span class="logo-text">PartnerPeak</span>
+    </div>
     <nav>
       <a href="../index.html">Home</a>
       <a href="../disclosure.html">Disclosure</a>
@@ -19,15 +22,41 @@
 
   <main class="container">
     <h1>Explore Partner Programs</h1>
-    <p>All programs are vetted for <strong>low-risk verticals</strong>, automation readiness, and FTC/GDPR compliance.</p>
+    <p class="sub">All programs are vetted for <strong>low-risk verticals</strong>, FTC disclosure, and automation readiness.</p>
 
-    <!-- Partner Grid -->
+    <section class="filters">
+      <input id="q" class="input" placeholder="Search program or vertical…" />
+      <select id="region" class="input">
+        <option value="">All regions</option>
+        <option value="US">US-ready</option>
+        <option value="EU">EU-ready</option>
+        <option value="UK">UK-ready</option>
+        <option value="APAC">APAC-ready</option>
+      </select>
+      <select id="vertical" class="input">
+        <option value="">All verticals</option>
+      </select>
+      <select id="sort" class="input">
+        <option value="rank">Sort: Rank</option>
+        <option value="payout">Sort: Payout (est.)</option>
+        <option value="automation">Sort: Automation</option>
+      </select>
+      <button id="clear" class="btn">Clear</button>
+    </section>
+
     <div id="partner-grid" class="partner-grid"></div>
+
+    <section id="compliance" class="compliance">
+      <h2>Compliance Notes</h2>
+      <ul>
+        <li>FTC: affiliate disclosures must be clear &amp; conspicuous near the CTA.</li>
+        <li>GDPR/CPRA: honor user consent before non-essential cookies or tracking.</li>
+        <li>Sanctions: exclude embargoed/sanctioned jurisdictions.</li>
+      </ul>
+    </section>
   </main>
 
-  <footer>
-    © 2025 PartnerPeak — Built for automated affiliate growth.
-  </footer>
+  <footer>© 2025 PartnerPeak — Built for automated affiliate growth.</footer>
 
   <script src="../scripts/partners.js"></script>
 </body>
