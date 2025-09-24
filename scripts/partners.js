@@ -1,85 +1,123 @@
-// scripts/partners.js — robust loader that works on GitHub Pages subfolders
+<script>
+// PartnerPeak: browser-side renderer for GitHub Pages
 
 (async () => {
-  // Always resolve relative to the current page (works for /partnerpeak/)
-  const partnersURL = new URL('./data/partners.json', window.location.href);
+  // Compute a safe relative URL for GitHub Pages (repo subfolder)
+  const base = location.pathname.endsWith('/')
+    ? location.pathname
+    : location.pathname.replace(/[^/]+$/, '/');
+  const dataURL = new URL('data/partners.json', base).toString();
 
-  async function loadPartners() {
-    const res = await fetch(partnersURL.toString(), { cache: 'no-store' });
-    if (!res.ok) {
-      throw new Error(`Failed to load ${partnersURL} → ${res.status} ${res.statusText}`);
-    }
-    const text = await res.text();
-    try {
-      const data = JSON.parse(text);
-      if (!Array.isArray(data)) throw new Error('partners.json must be an array []');
-      return data;
-    } catch (e) {
-      console.error('Invalid JSON in partners.json:', e);
-      throw e;
-    }
+  // Small helpers
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  // Where to print errors (without breaking the page)
+  function toast(msg) {
+    console.warn('[PartnerPeak]', msg);
   }
 
-  // helpers
-  const $ = (s) => document.querySelector(s);
-  const setText = (s, v) => { const el = $(s); if (el) el.textContent = v; };
-  const fmt = (n) => Intl.NumberFormat('en-US').format(n || 0);
-
-  function hydrateKPIs(list) {
-    setText('[data-kpi="total-programs"]', fmt(list.length));
-
-    const countBy = (pred) => list.filter(pred).length;
-    const hasRegion = (key) =>
-      countBy(p => (p.region || '').toUpperCase().includes(key));
-
-    setText('[data-kpi="us"]',   fmt(hasRegion('US')));
-    setText('[data-kpi="eu"]',   fmt(hasRegion('EU')));
-    setText('[data-kpi="uk"]',   fmt(hasRegion('UK')));
-    setText('[data-kpi="apac"]', fmt(hasRegion('APAC')));
-
-    const cats = new Set(list.map(p => (p.category || '').trim()).filter(Boolean));
-    setText('[data-kpi="categories"]', fmt(cats.size));
-
-    const globalish = countBy(p => /global/i.test(p.region || ''));
-    const pct = list.length ? Math.round((globalish / list.length) * 100) : 0;
-    setText('[data-kpi="global-pct"]', `${pct}%`);
+  // Fetch dataset
+  let partners = [];
+  try {
+    const res = await fetch(dataURL, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    partners = await res.json();
+    if (!Array.isArray(partners)) throw new Error('partners.json is not an array');
+  } catch (err) {
+    toast(`Could not load partners.json at ${dataURL}: ${err.message}`);
+    return; // stop here; we can’t render
   }
 
-  function renderPartnerList(list) {
-    const wrap = $('#partners-list');
-    if (!wrap) return;
+  // Basic stats
+  const total = partners.length;
+  const regions = {
+    us: 0, eu: 0, uk: 0, apac: 0
+  };
 
-    if (!list.length) {
-      wrap.innerHTML = `<div class="empty">No programs yet.</div>`;
+  // Region guesser (from geo_coverage text)
+  function bucketByRegion(partner) {
+    const cov = (partner.geo_coverage || '').toLowerCase();
+    if (/global/.test(cov)) {
+      regions.us++; regions.eu++; regions.uk++; regions.apac++;
       return;
     }
-
-    wrap.innerHTML = list.map(p => `
-      <article class="partner">
-        <div class="partner__head">
-          <h3>${p.name || 'Unnamed Program'}</h3>
-          <span class="badge">${(p.risk || 'Low')}</span>
-        </div>
-        <div class="partner__meta">
-          <span>${p.category || 'Uncategorized'}</span>
-          <span>${p.region || 'Region: n/a'}</span>
-          <span>${p.payout || 'Payout: n/a'}</span>
-        </div>
-        ${p.url ? `<a class="btn" href="${p.url}" target="_blank" rel="nofollow noopener">Program</a>` : ``}
-      </article>
-    `).join('');
+    if (/us|united states|north america|na/.test(cov)) regions.us++;
+    if (/(eu|europe(?!.*uk))/.test(cov)) regions.eu++;
+    if (/\buk\b|\bunited kingdom\b/.test(cov)) regions.uk++;
+    if (/apac|asia|pacific|australia|nz/.test(cov)) regions.apac++;
   }
 
-  try {
-    const partners = await loadPartners();
-    hydrateKPIs(partners);
-    renderPartnerList(partners);
-    console.log(`Loaded ${partners.length} partners from`, partnersURL.toString());
-  } catch (err) {
-    console.error(err);
-    const notice = document.createElement('div');
-    notice.style.cssText = 'position:fixed;bottom:10px;left:10px;background:#c0392b;color:#fff;padding:8px 12px;border-radius:8px;font:14px system-ui;z-index:9999';
-    notice.textContent = 'Failed to load partners.json. Open console for details.';
-    document.body.appendChild(notice);
+  partners.forEach(bucketByRegion);
+
+  // Category/verticals
+  const catSet = new Set();
+  partners.forEach(p => {
+    (p.verticals || []).forEach(v => catSet.add(String(v).toLowerCase()));
+  });
+
+  // Coverage (rough heuristic)
+  const coverage = Math.min(
+    100,
+    Math.round((Object.values(regions).reduce((a,b)=>a+b,0) / (4 * Math.max(1,total))) * 100)
+  );
+
+  // Update counters IF page has these ids. We won’t crash if they’re missing.
+  const map = [
+    ['#stat-total', total],
+    ['#stat-us', regions.us],
+    ['#stat-eu', regions.eu],
+    ['#stat-uk', regions.uk],
+    ['#stat-apac', regions.apac],
+    ['#stat-cats', catSet.size],
+    ['#stat-coverage', coverage + '%'],
+  ];
+  map.forEach(([sel, val]) => { const n = $(sel); if (n) n.textContent = val; });
+
+  // Render a grid of partners if a mount exists
+  // Add an element like: <div id="partners-grid"></div> on /partners page
+  const grid = $('#partners-grid');
+  if (grid) {
+    grid.innerHTML = partners.map(p => {
+      const verts = (p.verticals || []).join(' • ');
+      const payout = p.typical_payout_range || '';
+      const model = p.payout_model || '';
+      const autom = (p.automation_score != null) ? `Automation: ${p.automation_score}/5` : '';
+      const doc = p.conversion_reporting?.docs_url || p.source_url || '#';
+      return `
+        <article class="pp-card">
+          <div class="pp-card__header">
+            <h3>${p.program_name || 'Program'}</h3>
+            ${verts ? `<span class="pp-chip">${verts}</span>` : ''}
+          </div>
+          <div class="pp-card__body">
+            <div class="pp-meta"><strong>${model}</strong>${payout ? ` • ${payout}` : ''}</div>
+            <div class="pp-meta">${p.geo_coverage || ''}</div>
+            <div class="pp-meta">${autom}</div>
+          </div>
+          <div class="pp-card__footer">
+            <a class="pp-btn" href="${doc}" target="_blank" rel="noopener">Docs / Program</a>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    // Tiny styles if your CSS doesn’t have them yet
+    if (!$('#pp-inline-style')) {
+      const style = document.createElement('style');
+      style.id = 'pp-inline-style';
+      style.textContent = `
+        #partners-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+        .pp-card { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:16px; }
+        .pp-card__header { display:flex; align-items:center; gap:8px; justify-content:space-between; }
+        .pp-card h3 { margin:0; font-size:1.05rem; }
+        .pp-chip { font-size:.75rem; opacity:.85; border:1px solid rgba(255,255,255,0.15); padding:2px 8px; border-radius:999px; }
+        .pp-meta { opacity:.85; margin-top:6px; font-size:.9rem; }
+        .pp-btn { display:inline-block; padding:8px 12px; border-radius:8px; background:#1f6feb; color:#fff; text-decoration:none; }
+        .pp-btn:hover { filter:brightness(1.1); }
+      `;
+      document.head.appendChild(style);
+    }
   }
 })();
+</script>
