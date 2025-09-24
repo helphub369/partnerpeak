@@ -3,100 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PartnerPeak – Zero-Touch Referral Engine</title>
-  <link rel="stylesheet" href="assets/style.css" />
-  <style>
-    .stats-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.2rem;
-      margin: 1.5rem 0;
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-      padding: 1rem 1.5rem;
-      justify-content: space-around;
-    }
-    .stat {
-      text-align: center;
-      flex: 1 1 120px;
-    }
-    .stat-number {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #4da6ff;
-      margin-bottom: 0.2rem;
-    }
-    .stat-label {
-      font-size: 0.9rem;
-      color: #cbd5e1;
-    }
-  </style>
+  <title>PartnerPeak – Explore Partners</title>
+  <link rel="stylesheet" href="../assets/style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="logo">🌐 PartnerPeak</div>
+  <header>
+    <div class="logo">PartnerPeak</div>
     <nav>
-      <a href="index.html" class="active">Home</a>
-      <a href="templates/partners_index.html">Partners</a>
-      <a href="disclosure.html">Disclosure</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
+      <a href="../index.html">Home</a>
+      <a href="../disclosure.html">Disclosure</a>
+      <a href="../privacy.html">Privacy</a>
+      <a href="../terms.html">Terms</a>
     </nav>
   </header>
 
   <main class="container">
-    <h1>Zero-Touch Referral Engine for High-Ticket SaaS & Business Tools</h1>
-    <p>Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates—engineered to run on autopilot.</p>
+    <h1>Explore Partner Programs</h1>
+    <p>All programs are vetted for <strong>low-risk verticals</strong>, automation readiness, and FTC/GDPR compliance.</p>
 
-    <div class="actions">
-      <a href="templates/partners_index.html" class="btn">Explore Partners</a>
-      <a href="disclosure.html" class="btn-outline">Compliance & Policies</a>
-    </div>
-
-    <!-- 🔹 Live Stats -->
-    <div class="stats-bar">
-      <div class="stat"><div class="stat-number" id="stat-total">0</div><div class="stat-label">Programs</div></div>
-      <div class="stat"><div class="stat-number" id="stat-cats">0</div><div class="stat-label">Categories</div></div>
-      <div class="stat"><div class="stat-number" id="stat-us">0</div><div class="stat-label">US-ready</div></div>
-      <div class="stat"><div class="stat-number" id="stat-eu">0</div><div class="stat-label">EU-ready</div></div>
-      <div class="stat"><div class="stat-number" id="stat-uk">0</div><div class="stat-label">UK-ready</div></div>
-      <div class="stat"><div class="stat-number" id="stat-apac">0</div><div class="stat-label">APAC-ready</div></div>
-    </div>
+    <!-- Partner Grid -->
+    <div id="partner-grid" class="partner-grid"></div>
   </main>
 
   <footer>
-    <p>© 2025 PartnerPeak — Built for automated affiliate growth.</p>
+    © 2025 PartnerPeak — Built for automated affiliate growth.
   </footer>
 
-  <script>
-  (async () => {
-    try {
-      const res = await fetch("data/partners.json");
-      const partners = await res.json();
-
-      const cats = new Set();
-      const regions = { us:0, eu:0, uk:0, apac:0 };
-
-      partners.forEach(p => {
-        (p.verticals||[]).forEach(v => cats.add(v.toLowerCase()));
-        const g = (p.geo_coverage||"").toLowerCase();
-        if (g.includes("global")) { regions.us++; regions.eu++; regions.uk++; regions.apac++; }
-        if (g.includes("us")) regions.us++;
-        if (g.includes("eu")) regions.eu++;
-        if (g.includes("uk")) regions.uk++;
-        if (/apac|asia|australia|nz|pacific/.test(g)) regions.apac++;
-      });
-
-      document.getElementById("stat-total").textContent = partners.length;
-      document.getElementById("stat-cats").textContent = cats.size;
-      document.getElementById("stat-us").textContent = regions.us;
-      document.getElementById("stat-eu").textContent = regions.eu;
-      document.getElementById("stat-uk").textContent = regions.uk;
-      document.getElementById("stat-apac").textContent = regions.apac;
-    } catch (err) {
-      console.error("Failed to load partners:", err);
-    }
-  })();
-  </script>
+  <script src="../scripts/partners.js"></script>
 </body>
 </html>
