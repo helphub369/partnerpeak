@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PartnerPeak – Partner Catalog</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <title>PartnerPeak – Zero-Touch Referral Engine</title>
+  <link rel="stylesheet" href="assets/style.css" />
   <style>
     .stats-bar {
       display: flex;
@@ -36,48 +36,32 @@
   <header class="site-header">
     <div class="logo">🌐 PartnerPeak</div>
     <nav>
-      <a href="../index.html">Home</a>
-      <a href="partners_index.html" class="active">Partners</a>
-      <a href="../disclosure.html">Disclosure</a>
-      <a href="../privacy.html">Privacy</a>
-      <a href="../terms.html">Terms</a>
+      <a href="index.html" class="active">Home</a>
+      <a href="templates/partners_index.html">Partners</a>
+      <a href="disclosure.html">Disclosure</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
     </nav>
   </header>
 
   <main class="container">
-    <h1>Partner Catalog</h1>
-    <p>Browse ranked high-ticket SaaS & business tools, with automated compliance and real-time link templates.</p>
+    <h1>Zero-Touch Referral Engine for High-Ticket SaaS & Business Tools</h1>
+    <p>Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates—engineered to run on autopilot.</p>
 
-    <!-- 🔹 Stats bar -->
-    <div class="stats-bar">
-      <div class="stat">
-        <div class="stat-number" id="stat-total">0</div>
-        <div class="stat-label">Programs</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number" id="stat-cats">0</div>
-        <div class="stat-label">Categories</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number" id="stat-us">0</div>
-        <div class="stat-label">US-ready</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number" id="stat-eu">0</div>
-        <div class="stat-label">EU-ready</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number" id="stat-uk">0</div>
-        <div class="stat-label">UK-ready</div>
-      </div>
-      <div class="stat">
-        <div class="stat-number" id="stat-apac">0</div>
-        <div class="stat-label">APAC-ready</div>
-      </div>
+    <div class="actions">
+      <a href="templates/partners_index.html" class="btn">Explore Partners</a>
+      <a href="disclosure.html" class="btn-outline">Compliance & Policies</a>
     </div>
 
-    <!-- 🔹 Partner cards -->
-    <div id="partner-grid" class="grid"></div>
+    <!-- 🔹 Live Stats -->
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-number" id="stat-total">0</div><div class="stat-label">Programs</div></div>
+      <div class="stat"><div class="stat-number" id="stat-cats">0</div><div class="stat-label">Categories</div></div>
+      <div class="stat"><div class="stat-number" id="stat-us">0</div><div class="stat-label">US-ready</div></div>
+      <div class="stat"><div class="stat-number" id="stat-eu">0</div><div class="stat-label">EU-ready</div></div>
+      <div class="stat"><div class="stat-number" id="stat-uk">0</div><div class="stat-label">UK-ready</div></div>
+      <div class="stat"><div class="stat-number" id="stat-apac">0</div><div class="stat-label">APAC-ready</div></div>
+    </div>
   </main>
 
   <footer>
@@ -87,10 +71,9 @@
   <script>
   (async () => {
     try {
-      const res = await fetch("../data/partners.json");
+      const res = await fetch("data/partners.json");
       const partners = await res.json();
 
-      // Stats
       const cats = new Set();
       const regions = { us:0, eu:0, uk:0, apac:0 };
 
@@ -110,27 +93,6 @@
       document.getElementById("stat-eu").textContent = regions.eu;
       document.getElementById("stat-uk").textContent = regions.uk;
       document.getElementById("stat-apac").textContent = regions.apac;
-
-      // Cards
-      const grid = document.getElementById("partner-grid");
-      partners.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <h3>${p.program_name}</h3>
-          <div>
-            ${(p.verticals || []).map(v => `<span class="badge">${v}</span>`).join("")}
-          </div>
-          <div class="meta">
-            <strong>Payout:</strong> ${p.typical_payout_range || "N/A"}<br/>
-            <strong>Model:</strong> ${p.payout_model || "N/A"}<br/>
-            <strong>Geo:</strong> ${p.geo_coverage || "N/A"}<br/>
-            <strong>Automation:</strong> ${p.automation_score || 0}/5
-          </div>
-          <a class="btn" href="${p.source_url}" target="_blank">View Program</a>
-        `;
-        grid.appendChild(card);
-      });
     } catch (err) {
       console.error("Failed to load partners:", err);
     }
