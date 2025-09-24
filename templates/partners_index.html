@@ -6,42 +6,30 @@
   <title>PartnerPeak – Partner Catalog</title>
   <link rel="stylesheet" href="../assets/style.css" />
   <style>
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      justify-content: space-around;
     }
-    .card {
-      background: #101522;
-      border-radius: 12px;
-      padding: 1.2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      transition: transform 0.2s ease;
+    .stat {
+      text-align: center;
+      flex: 1 1 120px;
     }
-    .card:hover { transform: translateY(-5px); }
-    .card h3 { margin: 0 0 0.5rem 0; color: #4da6ff; }
-    .badge {
-      display: inline-block;
-      background: #1f2a44;
-      color: #9ddcff;
-      padding: 0.2rem 0.6rem;
-      margin: 0.2rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
+    .stat-number {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4da6ff;
+      margin-bottom: 0.2rem;
     }
-    .meta { font-size: 0.85rem; color: #ccc; margin-top: 0.8rem; }
-    .btn {
-      display: inline-block;
-      margin-top: 0.8rem;
-      padding: 0.4rem 0.8rem;
-      background: #4da6ff;
-      color: #fff;
-      border-radius: 6px;
-      text-decoration: none;
+    .stat-label {
       font-size: 0.9rem;
+      color: #cbd5e1;
     }
-    .btn:hover { background: #2680d9; }
   </style>
 </head>
 <body>
@@ -60,6 +48,35 @@
     <h1>Partner Catalog</h1>
     <p>Browse ranked high-ticket SaaS & business tools, with automated compliance and real-time link templates.</p>
 
+    <!-- 🔹 Stats bar -->
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-number" id="stat-total">0</div>
+        <div class="stat-label">Programs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="stat-cats">0</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="stat-us">0</div>
+        <div class="stat-label">US-ready</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="stat-eu">0</div>
+        <div class="stat-label">EU-ready</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="stat-uk">0</div>
+        <div class="stat-label">UK-ready</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number" id="stat-apac">0</div>
+        <div class="stat-label">APAC-ready</div>
+      </div>
+    </div>
+
+    <!-- 🔹 Partner cards -->
     <div id="partner-grid" class="grid"></div>
   </main>
 
@@ -72,8 +89,30 @@
     try {
       const res = await fetch("../data/partners.json");
       const partners = await res.json();
-      const grid = document.getElementById("partner-grid");
 
+      // Stats
+      const cats = new Set();
+      const regions = { us:0, eu:0, uk:0, apac:0 };
+
+      partners.forEach(p => {
+        (p.verticals||[]).forEach(v => cats.add(v.toLowerCase()));
+        const g = (p.geo_coverage||"").toLowerCase();
+        if (g.includes("global")) { regions.us++; regions.eu++; regions.uk++; regions.apac++; }
+        if (g.includes("us")) regions.us++;
+        if (g.includes("eu")) regions.eu++;
+        if (g.includes("uk")) regions.uk++;
+        if (/apac|asia|australia|nz|pacific/.test(g)) regions.apac++;
+      });
+
+      document.getElementById("stat-total").textContent = partners.length;
+      document.getElementById("stat-cats").textContent = cats.size;
+      document.getElementById("stat-us").textContent = regions.us;
+      document.getElementById("stat-eu").textContent = regions.eu;
+      document.getElementById("stat-uk").textContent = regions.uk;
+      document.getElementById("stat-apac").textContent = regions.apac;
+
+      // Cards
+      const grid = document.getElementById("partner-grid");
       partners.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
