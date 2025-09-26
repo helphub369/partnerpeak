@@ -1,37 +1,61 @@
-// app.js - Reads dataset and updates homepage stats
+// Reads window.PARTNERS_DATA and updates the homepage KPIs.
 
-function computeStats(partners) {
-  const totalPrograms = partners.length;
+(function () {
+  function parseCoverageFlags(s) {
+    if (!s) return { US:0, EU:0, UK:0, APAC:0, global:0 };
+    const flag = { US:0, EU:0, UK:0, APAC:0, global:0 };
+    const raw = String(s).toUpperCase();
 
-  const categories = new Set();
-  let us = 0, eu = 0, uk = 0, apac = 0, global = 0;
-
-  partners.forEach(p => {
-    // categories
-    p.verticals.forEach(v => categories.add(v));
-
-    // coverage
-    if (p.geo_coverage.includes("US")) us++;
-    if (p.geo_coverage.includes("EU")) eu++;
-    if (p.geo_coverage.includes("UK")) uk++;
-    if (p.geo_coverage.includes("APAC")) apac++;
-    if (p.geo_coverage.includes("global")) global++;
-  });
-
-  // inject into DOM
-  document.getElementById("programCount").textContent = totalPrograms;
-  document.getElementById("categoryCount").textContent = categories.size;
-  document.getElementById("coveragePercent").textContent =
-    Math.round((global / totalPrograms) * 100) + "%";
-
-  document.getElementById("usCount").textContent = us;
-  document.getElementById("euCount").textContent = eu;
-  document.getElementById("ukCount").textContent = uk;
-  document.getElementById("apacCount").textContent = apac;
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  if (window.PARTNERS_DATA) {
-    computeStats(window.PARTNERS_DATA);
+    if (raw.includes("GLOBAL")) { flag.global = 1; flag.US = flag.EU = flag.UK = flag.APAC = 1; return flag; }
+    if (raw.includes("US")) flag.US = 1;
+    if (raw.includes("EU")) flag.EU = 1;
+    if (raw.includes("UK")) flag.UK = 1;
+    if (raw.includes("APAC")) flag.APAC = 1;
+    return flag;
   }
-});
+
+  function compute(partners) {
+    const categories = new Set();
+    let total = 0, global = 0, us=0, eu=0, uk=0, apac=0;
+
+    partners.forEach(p => {
+      total++;
+      (p.verticals || []).forEach(v => categories.add(v));
+
+      const f = parseCoverageFlags(p.geo_coverage);
+      if (f.global) global++;
+      if (f.US) us++;
+      if (f.EU) eu++;
+      if (f.UK) uk++;
+      if (f.APAC) apac++;
+    });
+
+    const coveragePercent = total ? Math.round((global / total) * 100) : 0;
+
+    return {
+      totalPrograms: total,
+      categoriesCount: categories.size,
+      coveragePercent,
+      us, eu, uk, apac
+    };
+  }
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  function init() {
+    const data = Array.isArray(window.PARTNERS_DATA) ? window.PARTNERS_DATA : [];
+    const stats = compute(data);
+    setText("programCount", stats.totalPrograms);
+    setText("categoryCount", stats.categoriesCount);
+    setText("coveragePercent", stats.coveragePercent + "%");
+    setText("usCount", stats.us);
+    setText("euCount", stats.eu);
+    setText("ukCount", stats.uk);
+    setText("apacCount", stats.apac);
+  }
+
+  window.addEventListener("DOMContentLoaded", init);
+})();
