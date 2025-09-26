@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>PartnerPeak — Partners</title>
+  <link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+  <header class="nav">
+    <div class="brand"><span class="dot"></span> PartnerPeak</div>
+    <nav>
+      <a class="active" href="partners.html">Partners</a>
+      <a href="disclosure.html">Disclosure</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Partners</h1>
+
+    <div class="filters">
+      <input id="q" class="input" placeholder="Search program or vertical…"/>
+      <div class="toggles">
+        <label><input type="checkbox" id="f-us"/> US-ready</label>
+        <label><input type="checkbox" id="f-eu"/> EU-ready</label>
+        <label><input type="checkbox" id="f-uk"/> UK-ready</label>
+        <label><input type="checkbox" id="f-apac"/> APAC-ready</label>
+      </div>
+    </div>
+
+    <div id="chips" class="chiprow"></div>
+
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <!-- dataset + logic (must be after the DOM) -->
+  <script src="scripts/partners.data.js"></script>
+  <script src="scripts/app.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      PP.renderPartners(PARTNER_DATA);
+    });
+  </script>
+</body>
+</html>
