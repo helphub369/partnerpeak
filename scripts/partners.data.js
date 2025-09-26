@@ -1,312 +1,125 @@
-/* PartnerPeak – Low-risk partner catalog (Phase A, 50+) */
-/* All entries restricted to automation-friendly B2B verticals (SaaS, BI, DevTools, Security (standard), HR/Payroll, Accounting, Productivity, CDP/ETL, iPaaS, LegalTech lite). */
+// scripts/partners.data.js
+// Low-risk partner catalog for PartnerPeak (SaaS, analytics, productivity, ops, HR, finance, devtools, etc.)
 
-window.PARTNER_DATA = [
-  /* ---- Analytics / BI ---- */
-  {
-    program_name: "InsightBoard",
-    verticals: ["analytics","bi"],
-    mechanism: "referral link",
-    automation_score: 5,
-    payout_model: "recurring",
-    typical_payout_range: "$200–$1,200",
-    geo_coverage: "global",
-    regions_ready: ["US","EU","UK","APAC"],
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://docs.insightboard.example/api" },
-    deep_link_template: "https://insightboard.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://insightboard.example/partners",
-    blurb: "Self-serve BI with governed metrics and robust API reporting."
-  },
-  {
-    program_name: "MetricWave",
-    verticals: ["analytics","dashboards"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$150–$900",
-    geo_coverage: "US|EU|UK|APAC",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://metricwave.example/docs/partner" },
-    deep_link_template: "https://metricwave.example/r/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://metricwave.example/partners",
-    blurb: "Modern metrics store + dashboards. Webhooks for events."
-  },
+const tpl = "https://example.com/?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}";
+const doc = (slug) => `https://docs.example.com/${slug}`;
+const SRC = (slug) => `https://www.example.com/partners/${slug}`;
 
-  /* ---- Data / ETL / iPaaS ---- */
-  {
-    program_name: "Zen Data Feeds",
-    verticals: ["data_feeds","etl","ipaaS"],
-    mechanism: "referral link",
-    automation_score: 5,
-    payout_model: "recurring",
-    typical_payout_range: "$300–$1,500",
-    geo_coverage: "global",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://zendata.example/partners/api" },
-    deep_link_template: "https://zendata.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://zendata.example/partners",
-    blurb: "Reliable ETL pipelines with SLA and usage metering."
-  },
-  {
-    program_name: "SyncBridge",
-    verticals: ["ipaaS","automation"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$120–$800",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://syncbridge.example/partners" },
-    deep_link_template: "https://syncbridge.example/aff/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://syncbridge.example/partners",
-    blurb: "No-code connectors with webhook triggers and logs."
-  },
+const make = ({
+  program_name,
+  verticals,
+  mechanism = "referral link",
+  automation_score = 4,
+  payout_model = "recurring",
+  typical_payout_range = "$100–$1500",
+  geo_coverage = "global",
+  approval_friction = "light",
+  conv_type = "api",
+  docs_slug = "tracking",
+  source_slug,
+  risk_flags = [],
+}) => ({
+  program_name,
+  verticals,
+  mechanism,
+  automation_score,
+  payout_model,
+  typical_payout_range,
+  geo_coverage,
+  approval_friction,
+  conversion_reporting: { type: conv_type, docs_url: doc(docs_slug) },
+  deep_link_template: tpl,
+  risk_flags,
+  source_url: SRC(source_slug || program_name.toLowerCase().replace(/\s+/g, "-")),
+});
 
-  /* ---- DevTools / API ---- */
-  {
-    program_name: "VectorCache",
-    verticals: ["devtools","ai","search"],
-    mechanism: "referral link",
-    automation_score: 5,
-    payout_model: "recurring",
-    typical_payout_range: "$180–$1,000",
-    geo_coverage: "global",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://vectorcache.example/partners" },
-    deep_link_template: "https://vectorcache.example/aff?ref={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://vectorcache.example/partners",
-    blurb: "Vector DB + embeddings API with usage-based plans."
-  },
-  {
-    program_name: "ScriptShip",
-    verticals: ["devops","deploy"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$120–$700",
-    geo_coverage: "US|EU|UK|APAC",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://scriptship.example/partners" },
-    deep_link_template: "https://scriptship.example/a/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://scriptship.example/partners",
-    blurb: "CI/CD for serverless + edge; first-class audit hooks."
-  },
+// 60 programs — all low-risk verticals
+const partners = [
+  make({ program_name: "Acme Cyber SaaS", verticals: ["cybersecurity","saas"], typical_payout_range: "$200–$1500", source_slug: "acme-cyber" }),
+  make({ program_name: "Zen Data Feeds", verticals: ["data_feeds","analytics","saas"], typical_payout_range: "$120–$900", source_slug: "zen-data" }),
+  make({ program_name: "TitanERP Enterprise", verticals: ["erp","saas"], typical_payout_range: "$300–$1800", approval_friction: "moderate", source_slug: "titan-erp" }),
 
-  /* ---- Security (standard, low-risk) ---- */
-  {
-    program_name: "SafeDocs",
-    verticals: ["security","compliance"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$200–$900",
-    geo_coverage: "global",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://safedocs.example/partners" },
-    deep_link_template: "https://safedocs.example/aff/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://safedocs.example/partners",
-    blurb: "Document DLP, retention, and secure sharing."
-  },
-  {
-    program_name: "PolicyScan",
-    verticals: ["compliance","privacy"],
-    mechanism: "referral link",
-    automation_score: 5,
-    payout_model: "recurring",
-    typical_payout_range: "$250–$1,100",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://policyscan.example/docs" },
-    deep_link_template: "https://policyscan.example/partners?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://policyscan.example/partners",
-    blurb: "Privacy policy automation and RoPA management."
-  },
+  make({ program_name: "Nimbus CRM Cloud", verticals: ["crm","sales","saas"], typical_payout_range: "$150–$1200" }),
+  make({ program_name: "Ledgerly Books", verticals: ["accounting","finance","saas"], typical_payout_range: "$120–$800" }),
+  make({ program_name: "HelpHero Desk", verticals: ["helpdesk","support","saas"], typical_payout_range: "$100–$700" }),
+  make({ program_name: "FlowOps Automation", verticals: ["workflow","automation","saas"], typical_payout_range: "$140–$900" }),
+  make({ program_name: "MetricMind BI", verticals: ["bi","analytics","reporting","saas"], typical_payout_range: "$180–$1300" }),
+  make({ program_name: "ShipRight 3PL", verticals: ["logistics","shipping","saas"], typical_payout_range: "$130–$950" }),
+  make({ program_name: "FormPilot", verticals: ["forms","lead_capture","saas"], typical_payout_range: "$100–$500" }),
+  make({ program_name: "CampaignCraft", verticals: ["email","marketing_automation","saas"], typical_payout_range: "$130–$1100" }),
+  make({ program_name: "PayGate Pro", verticals: ["payments","billing","saas"], typical_payout_range: "$160–$1200" }),
+  make({ program_name: "QueueIQ Contact Center", verticals: ["contact_center","telephony","saas"], typical_payout_range: "$200–$1400" }),
+  make({ program_name: "VaultDocs DMS", verticals: ["dms","content_management","saas"], typical_payout_range: "$120–$800" }),
+  make({ program_name: "SecureSign eID", verticals: ["esign","identity","saas"], typical_payout_range: "$110–$600" }),
+  make({ program_name: "ProjectPilot PM", verticals: ["project_management","collaboration","saas"], typical_payout_range: "$100–$700" }),
+  make({ program_name: "Hirewise ATS", verticals: ["ats","recruiting","hr","saas"], typical_payout_range: "$150–$900" }),
+  make({ program_name: "PeoplePulse HRIS", verticals: ["hris","payroll","saas"], typical_payout_range: "$180–$1200" }),
+  make({ program_name: "PolicyScan GRC", verticals: ["grc","compliance","saas"], typical_payout_range: "$180–$1300" }),
+  make({ program_name: "AssetTrack ITAM", verticals: ["itam","it_ops","saas"], typical_payout_range: "$140–$900" }),
 
-  /* ---- HR / Payroll / PeopleOps ---- */
-  {
-    program_name: "OrgChartsHR",
-    verticals: ["hr","peopleops"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$150–$700",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://orgchartshr.example/partners" },
-    deep_link_template: "https://orgchartshr.example/aff/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://orgchartshr.example/partners",
-    blurb: "Org charts, headcount planning, role analytics."
-  },
-  {
-    program_name: "AccessGate",
-    verticals: ["hr","security"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$120–$600",
-    geo_coverage: "US|EU|UK|APAC",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://accessgate.example/partners" },
-    deep_link_template: "https://accessgate.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://accessgate.example/partners",
-    blurb: "Employee lifecycle access reviews and SSO governance."
-  },
+  make({ program_name: "DeviceGuard MDM", verticals: ["mdm","endpoint","saas"], typical_payout_range: "$160–$1000" }),
+  make({ program_name: "StreamCast CDN", verticals: ["cdn","media_delivery","saas"], typical_payout_range: "$200–$1500" }),
+  make({ program_name: "CloudVault Backup", verticals: ["backup","dr","saas"], typical_payout_range: "$150–$1000" }),
+  make({ program_name: "MirrorSync iPaaS", verticals: ["ipaas","integration","saas"], typical_payout_range: "$170–$1200" }),
+  make({ program_name: "QueryHub Warehouse", verticals: ["data_warehouse","analytics","saas"], typical_payout_range: "$220–$1600" }),
+  make({ program_name: "ModelTrack MLOps", verticals: ["mlops","ai_ops","saas"], typical_payout_range: "$220–$1500", approval_friction: "moderate" }),
+  make({ program_name: "TaskForge RPA", verticals: ["rpa","automation","saas"], typical_payout_range: "$180–$1200" }),
+  make({ program_name: "SignalDesk Uptime", verticals: ["observability","status","saas"], typical_payout_range: "$120–$700" }),
+  make({ program_name: "DeployMate CI", verticals: ["ci_cd","devtools","saas"], typical_payout_range: "$140–$900" }),
+  make({ program_name: "FeatureFlagger", verticals: ["feature_flags","release","saas"], typical_payout_range: "$120–$800" }),
 
-  /* ---- Accounting / FinOps (no lending, no finance offers) ---- */
-  {
-    program_name: "LedgerLight",
-    verticals: ["accounting","finops"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$180–$900",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://ledgerlight.example/partners" },
-    deep_link_template: "https://ledgerlight.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://ledgerlight.example/partners",
-    blurb: "Close management, variance tracking, and audit logs."
-  },
-  {
-    program_name: "InvoicePilot",
-    verticals: ["accounting","billing"],
-    mechanism: "referral link",
-    automation_score: 5,
-    payout_model: "recurring",
-    typical_payout_range: "$150–$800",
-    geo_coverage: "global",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://invoicepilot.example/partners" },
-    deep_link_template: "https://invoicepilot.example/aff/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://invoicepilot.example/partners",
-    blurb: "Usage-based invoicing with revenue recognition helpers."
-  },
+  make({ program_name: "CacheCloud DBaaS", verticals: ["database","cache","saas"], typical_payout_range: "$180–$1300" }),
+  make({ program_name: "EdgeShield WAF", verticals: ["application_security","waf","saas"], typical_payout_range: "$200–$1400" }),
+  make({ program_name: "NoCodeGrid Builder", verticals: ["nocode","builder","saas"], typical_payout_range: "$100–$700" }),
+  make({ program_name: "DocsIQ Knowledge", verticals: ["knowledge_base","support","saas"], typical_payout_range: "$110–$600" }),
+  make({ program_name: "ScheduleX", verticals: ["scheduling","calendars","saas"], typical_payout_range: "$100–$500" }),
+  make({ program_name: "LearnLoop LMS", verticals: ["lms","training","saas"], typical_payout_range: "$120–$800" }),
+  make({ program_name: "EventPilot", verticals: ["events","ticketing","saas"], typical_payout_range: "$120–$900" }),
+  make({ program_name: "QuoteQuick CPQ", verticals: ["cpq","sales_ops","saas"], typical_payout_range: "$150–$1000" }),
+  make({ program_name: "PartnerHub PRM", verticals: ["prm","alliances","saas"], typical_payout_range: "$150–$1000" }),
+  make({ program_name: "AffiliateEngine", verticals: ["affiliate","tracking","saas"], typical_payout_range: "$120–$900" }),
 
-  /* ---- Productivity / Collab ---- */
-  {
-    program_name: "TaskForge",
-    verticals: ["productivity","pm"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$80–$400",
-    geo_coverage: "US|EU|UK|APAC",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://taskforge.example/partners" },
-    deep_link_template: "https://taskforge.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://taskforge.example/partners",
-    blurb: "Projects, docs, and automations with webhook recipes."
-  },
-  {
-    program_name: "BrieflyDocs",
-    verticals: ["productivity","knowledge"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$70–$350",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://brieflydocs.example/partners" },
-    deep_link_template: "https://brieflydocs.example/aff/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://brieflydocs.example/partners",
-    blurb: "Team wiki with structured notes and review workflows."
-  },
+  make({ program_name: "MediaBox DAM", verticals: ["dam","content_ops","saas"], typical_payout_range: "$110–$700" }),
+  make({ program_name: "ReviewBeacon", verticals: ["reputation","reviews","saas"], typical_payout_range: "$100–$600" }),
+  make({ program_name: "JourneyMap CDP", verticals: ["cdp","customer_data","saas"], typical_payout_range: "$200–$1400" }),
+  make({ program_name: "ConsentFlow CMP", verticals: ["privacy","consent","saas"], typical_payout_range: "$120–$800" }),
+  make({ program_name: "AdBudget Planner", verticals: ["spend_ops","marketing_ops","saas"], typical_payout_range: "$100–$600" }),
+  make({ program_name: "RouteSmart Field", verticals: ["field_ops","routing","saas"], typical_payout_range: "$130–$900" }),
+  make({ program_name: "QuoteShield Contracts", verticals: ["clm","legal_ops","saas"], typical_payout_range: "$140–$900" }),
+  make({ program_name: "InboxOps DMARC", verticals: ["email_security","deliverability","saas"], typical_payout_range: "$120–$700" }),
+  make({ program_name: "ChargePilot AR", verticals: ["ar","collections","finance","saas"], typical_payout_range: "$150–$1000" }),
+  make({ program_name: "SpendSense AP", verticals: ["ap","procure_to_pay","saas"], typical_payout_range: "$150–$1000" }),
 
-  /* ---- CDP / Messaging (non-adult, non-surveillance) ---- */
-  {
-    program_name: "ProfileHub",
-    verticals: ["cdp","audience"],
-    mechanism: "referral link",
-    automation_score: 5,
-    payout_model: "recurring",
-    typical_payout_range: "$220–$1,100",
-    geo_coverage: "global",
-    approval_friction: "light",
-    conversion_reporting: { type:"api", docs_url:"https://profilehub.example/partners" },
-    deep_link_template: "https://profilehub.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://profilehub.example/partners",
-    blurb: "Consent-aware customer profiles with streaming pipelines."
-  },
-  {
-    program_name: "EventRail",
-    verticals: ["events","messaging"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "recurring",
-    typical_payout_range: "$120–$600",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://eventrail.example/partners" },
-    deep_link_template: "https://eventrail.example/a/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://eventrail.example/partners",
-    blurb: "Event bus with replay and webhook transformation."
-  },
+  make({ program_name: "UsageMeter Billing", verticals: ["usage_billing","metering","saas"], typical_payout_range: "$150–$1100" }),
+  make({ program_name: "TaxTrail Indirect", verticals: ["tax","compliance","saas"], typical_payout_range: "$140–$900" }),
+  make({ program_name: "InsightForms Analytics", verticals: ["product_analytics","feedback","saas"], typical_payout_range: "$120–$800" }),
+  make({ program_name: "RosterHQ Scheduling", verticals: ["workforce","scheduling","saas"], typical_payout_range: "$110–$700" }),
+  make({ program_name: "MeetCast Webinar", verticals: ["webinar","video","saas"], typical_payout_range: "$110–$700" }),
+  make({ program_name: "StackGuard Posture", verticals: ["cloud_security_posture","saas"], typical_payout_range: "$200–$1400" }),
+  make({ program_name: "SentryDesk ITSM", verticals: ["itsm","service_desk","saas"], typical_payout_range: "$140–$900" }),
+  make({ program_name: "PolicyBot Documentation", verticals: ["policy","docs","compliance","saas"], typical_payout_range: "$100–$600" }),
+  make({ program_name: "AuditTrail SOX", verticals: ["audit","risk","saas"], typical_payout_range: "$160–$1200" }),
+  make({ program_name: "BoardBook Rooms", verticals: ["board_portal","governance","saas"], typical_payout_range: "$180–$1300" }),
 
-  /* ---- LegalTech (light) ---- */
-  {
-    program_name: "ClauseKit",
-    verticals: ["legaltech","contracts"],
-    mechanism: "referral link",
-    automation_score: 4,
-    payout_model: "one-time",
-    typical_payout_range: "$200–$500",
-    geo_coverage: "US|EU|UK",
-    approval_friction: "standard",
-    conversion_reporting: { type:"api", docs_url:"https://clausekit.example/partners" },
-    deep_link_template: "https://clausekit.example/aff/{AFF_ID}?s1={CLICK_ID}&dest={URLENCODED_DEST}",
-    risk_flags: [],
-    source_url: "https://clausekit.example/partners",
-    blurb: "Template-driven contract assembly with approvals."
-  },
-
-  /* ---- Add many more (to exceed 50) ---- */
-  /* For brevity, the next items reuse sane patterns but vary names/verticals. */
-  ...[
-    "QueryHub","DataWeave","ModelTrack","DashForge","MetricDock","ObserveIQ","EventScope",
-    "DevTray","DeployMate","EdgeSuite","ApiPilot","Webhookry","ScaleForms","RollupCI",
-    "PolicyHub","ConsentFlow","TrustNote","RiskBoard","DocAudit","AccessLedger",
-    "CampFire Docs","NoteLoop","ProjectRay","SlateSpace","Briefboard","TimeGrid",
-    "HeadcountPro","RoleMatrix","InterviewBase","OrgSignals","TeamPulse","ShiftPlanner",
-    "BillFlow","RecoTrack","PayRun","CloseMate","SpendGlass","UnitEconomy",
-    "GuardGrid","AuditTrailr","SecretFold","VaultBack","KeyStation","SingleSign",
-    "MailPanel","SegmentoLite","JourneyMap","AudienceKit","EventSwitch","PipeSync"
-  ].map((name,i)=>({
-    program_name: name,
-    verticals: (()=>{
-      const groups=[
-        ["analytics","bi"],["etl","ipaaS"],["devtools"],["devops","deploy"],["security"],["hr","peopleops"],
-        ["accounting","billing"],["productivity","pm"],["cdp","audience"],["events","automation"],["compliance","privacy"]
-      ];
-      return groups[i%groups.length];
-    })(),
-    mechanism: "referral link",
-    automation_score: 3 + (i%3), // 3..5
-    payout_model: (i%4===0)?"one-time":"recurring",
-    typical_payout_range: (i%4===0)?"$100–$400":"$120–$900",
-    geo_coverage: (i%5===0)?"global":"US|EU|UK",
-    regions_ready: (i%5===0)?["US","EU","UK","APAC"]:["US","EU","UK"],
-    approval_friction: (i%6===0)?"light":"standard",
-    conversion_reporting: { type:"api", docs_url:`https://${name.replace(/\s+/g,'').toLowerCase()}.example/partners/docs` },
-    deep_link_template: `https://${name.replace(/\s+/g,'').toLowerCase()}.example/aff?aff={AFF_ID}&s1={CLICK_ID}&dest={URLENCODED_DEST}`,
-    risk_flags: [],
-    source_url: `https://${name.replace(/\s+/g,'').toLowerCase()}.example/partners`,
-    blurb: "Low-risk, automation-friendly B2B SaaS."
-  }))
+  make({ program_name: "ProcurePath", verticals: ["procurement","supplier","saas"], typical_payout_range: "$150–$1100" }),
+  make({ program_name: "QuotePress Proposals", verticals: ["proposals","sales_enablement","saas"], typical_payout_range: "$100–$700" }),
+  make({ program_name: "LocalReach Listings", verticals: ["local_seo","listings","saas"], typical_payout_range: "$100–$500" }),
+  make({ program_name: "ContentGrid CMS", verticals: ["cms","web_ops","saas"], typical_payout_range: "$120–$900" }),
+  make({ program_name: "StudioSign Brand", verticals: ["brand_portal","assets","saas"], typical_payout_range: "$120–$800" }),
+  make({ program_name: "WarehouseIQ OMS", verticals: ["oms","inventory","saas"], typical_payout_range: "$160–$1100" }),
+  make({ program_name: "RetailLoop POS Cloud", verticals: ["pos","retail_ops","saas"], typical_payout_range: "$150–$1000" }),
+  make({ program_name: "FleetSense Telematics", verticals: ["fleet","telematics","saas"], typical_payout_range: "$150–$1000" }),
+  make({ program_name: "BookingNest PMS", verticals: ["property_mgmt","hospitality","saas"], typical_payout_range: "$140–$900" }),
+  make({ program_name: "DeskStudio Facilities", verticals: ["facilities","space_mgmt","saas"], typical_payout_range: "$120–$800" }),
 ];
+
+// Derived helper (optional): sanitize + freeze
+partners.forEach((p) => {
+  if (!Array.isArray(p.verticals)) p.verticals = [String(p.verticals || "saas")];
+  if (!p.typical_payout_range) p.typical_payout_range = "$100–$1500";
+  if (!p.geo_coverage) p.geo_coverage = "global";
+});
+Object.freeze(partners);
+
+export default partners;
+export { partners };
