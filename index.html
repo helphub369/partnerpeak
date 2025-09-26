@@ -3,92 +3,132 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PartnerPeak</title>
+  <title>PartnerPeak — Zero-Touch Referral Engine</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
   <header class="site-header">
-    <div class="brand">🔵 PartnerPeak</div>
-    <nav class="top-nav">
-      <a href="#">Partners</a>
-      <a href="#">Disclosure</a>
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-    </nav>
+    <div class="container nav">
+      <div class="brand">
+        <span class="dot"></span>
+        <span class="logo-text">PartnerPeak</span>
+      </div>
+      <nav class="menu">
+        <a href="#partners">Partners</a>
+        <a href="disclosure.html">Disclosure</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
   </header>
 
   <main>
+    <!-- Hero -->
     <section class="hero">
-      <div class="hero-copy">
-        <h1>
-          Zero-Touch Referral Engine<br />
-          for High-Ticket SaaS & Business Tools
-        </h1>
-        <p class="lede">
-          Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates—
-          engineered to run on autopilot.
+      <div class="container">
+        <h1>Zero-Touch Referral Engine<br/>for High-Ticket SaaS &amp; Business Tools</h1>
+        <p class="sub">
+          Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates — engineered to run on autopilot.
         </p>
-        <div class="cta-row">
-          <a class="btn primary" href="#partners">Explore Partners</a>
-          <a class="btn" href="#">Compliance & Policies</a>
-        </div>
-      </div>
-      <div class="hero-panel">
+
         <div class="pill-row">
           <span class="pill">Automation-first</span>
           <span class="pill">Global</span>
           <span class="pill pill-green">Low Risk</span>
         </div>
-        <div class="totals">
-          <div class="total">
-            <div class="num" id="usCount">0</div>
-            <div class="label">US-ready</div>
+
+        <!-- Region quick stats -->
+        <div class="region-cards">
+          <div class="region-card">
+            <div class="region-number" id="usCount">0</div>
+            <div class="region-label">US-ready</div>
           </div>
-          <div class="total">
-            <div class="num" id="euCount">0</div>
-            <div class="label">EU-ready</div>
+          <div class="region-card">
+            <div class="region-number" id="euCount">0</div>
+            <div class="region-label">EU-ready</div>
           </div>
-          <div class="total">
-            <div class="num" id="ukCount">0</div>
-            <div class="label">UK-ready</div>
+          <div class="region-card">
+            <div class="region-number" id="ukCount">0</div>
+            <div class="region-label">UK-ready</div>
           </div>
-          <div class="total">
-            <div class="num" id="apacCount">0</div>
-            <div class="label">APAC-ready</div>
+          <div class="region-card">
+            <div class="region-number" id="apacCount">0</div>
+            <div class="region-label">APAC-ready</div>
           </div>
         </div>
-        <p class="disclaimer">
-          All listings restricted to low-risk verticals and automation-friendly programs.
+
+        <div class="cta-row">
+          <a class="btn" href="#partners">Explore Partners</a>
+          <a class="btn ghost" href="#compliance">Compliance &amp; Policies</a>
+        </div>
+
+        <!-- Top summary cards -->
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-number" id="programCount">0</div>
+            <div class="stat-label">Programs in catalog</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number" id="categoryCount">0</div>
+            <div class="stat-label">Categories covered</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number" id="coveragePct">0%</div>
+            <div class="stat-label">Global coverage</div>
+          </div>
+        </div>
+
+        <p class="hint muted">
+          This homepage reads directly from <code>data/partners.json</code>.
         </p>
       </div>
     </section>
 
-    <section class="kpis">
-      <div class="kpi">
-        <div class="kpi-num" id="programCount">0</div>
-        <div class="kpi-label">Programs in catalog</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-num" id="categoryCount">0</div>
-        <div class="kpi-label">Categories covered</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-num" id="coveragePercent">0%</div>
-        <div class="kpi-label">Global coverage</div>
+    <!-- Partners Directory -->
+    <section id="partners" class="partners">
+      <div class="container">
+        <div class="section-head">
+          <h2>Partners</h2>
+          <div class="filters">
+            <input id="searchBox" class="input" placeholder="Search by name or vertical…" />
+            <select id="regionFilter" class="input">
+              <option value="">All regions</option>
+              <option value="US">US-ready</option>
+              <option value="EU">EU-ready</option>
+              <option value="UK">UK-ready</option>
+              <option value="APAC">APAC-ready</option>
+              <option value="GLOBAL">Global</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="partnersList" class="grid"></div>
+        <div id="emptyState" class="empty hidden">No partners match your filters.</div>
       </div>
     </section>
 
-    <section id="partners" class="partners-note">
-      <p>Partners directory coming next. This homepage reads directly from <code>scripts/partners.data.js</code>.</p>
+    <!-- Compliance -->
+    <section id="compliance" class="compliance">
+      <div class="container">
+        <h2>Compliance &amp; Policies</h2>
+        <ul class="policy-list">
+          <li>FTC affiliate disclosure injected on all promotional surfaces.</li>
+          <li>GDPR/CPRA-ready cookie &amp; privacy pages.</li>
+          <li>Program links support UTM &amp; deep-link templates (when available).</li>
+        </ul>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <small>© 2025 PartnerPeak — Built for automated affiliate growth.</small>
+    <div class="container foot">
+      <div>© <span id="year"></span> PartnerPeak — Built for automated affiliate growth.</div>
+      <div class="small muted">All listings restricted to low-risk verticals and automation-friendly programs.</div>
+    </div>
   </footer>
 
-  <!-- Order matters: data first, then app -->
-  <script src="scripts/partners.data.js"></script>
-  <script src="scripts/app.js"></script>
+  <script src="scripts/app.js" defer></script>
 </body>
 </html>
