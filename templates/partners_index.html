@@ -1,63 +1,152 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PartnerPeak — Explore Partners</title>
-  <link rel="stylesheet" href="../assets/style.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PartnerPeak — Zero-Touch Referral Engine</title>
+  <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo-dot"></div>
-      <span class="logo-text">PartnerPeak</span>
+  <header class="site-header">
+    <div class="wrap">
+      <div class="brand">
+        <div class="dot"></div>
+        <strong>PartnerPeak</strong>
+      </div>
+      <nav>
+        <a href="#partners">Partners</a>
+        <a href="disclosure.html">Disclosure</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
     </div>
-    <nav>
-      <a href="../index.html">Home</a>
-      <a href="../disclosure.html">Disclosure</a>
-      <a href="../privacy.html">Privacy</a>
-      <a href="../terms.html">Terms</a>
-    </nav>
   </header>
 
-  <main class="container">
-    <h1>Explore Partner Programs</h1>
-    <p class="sub">All programs are vetted for <strong>low-risk verticals</strong>, FTC disclosure, and automation readiness.</p>
+  <main class="wrap">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero__text">
+        <div class="pill-row">
+          <span class="pill">Automation-first</span>
+          <span class="pill">Global</span>
+          <span class="pill success">Low Risk</span>
+        </div>
+        <h1>Zero-Touch Referral Engine<br/>for High-Ticket SaaS &amp; Business Tools</h1>
+        <p class="lede">
+          Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and
+          real-time catalog updates—engineered to run on autopilot.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="#partners">Explore Partners</a>
+          <a class="btn ghost" href="disclosure.html">Compliance &amp; Policies</a>
+        </div>
+      </div>
 
-    <section class="filters">
-      <input id="q" class="input" placeholder="Search program or vertical…" />
-      <select id="region" class="input">
-        <option value="">All regions</option>
-        <option value="US">US-ready</option>
-        <option value="EU">EU-ready</option>
-        <option value="UK">UK-ready</option>
-        <option value="APAC">APAC-ready</option>
-      </select>
-      <select id="vertical" class="input">
-        <option value="">All verticals</option>
-      </select>
-      <select id="sort" class="input">
-        <option value="rank">Sort: Rank</option>
-        <option value="payout">Sort: Payout (est.)</option>
-        <option value="automation">Sort: Automation</option>
-      </select>
-      <button id="clear" class="btn">Clear</button>
+      <aside class="hero__metrics">
+        <div class="stat"><div class="stat__n" id="hero-us">0</div><div class="stat__l">US-ready</div></div>
+        <div class="stat"><div class="stat__n" id="hero-eu">0</div><div class="stat__l">EU-ready</div></div>
+        <div class="stat"><div class="stat__n" id="hero-uk">0</div><div class="stat__l">UK-ready</div></div>
+        <div class="stat"><div class="stat__n" id="hero-apac">0</div><div class="stat__l">APAC-ready</div></div>
+        <p class="hero__note">All listings restricted to low-risk verticals and automation-friendly programs.</p>
+      </aside>
     </section>
 
-    <div id="partner-grid" class="partner-grid"></div>
+    <!-- Toolbar / Filters -->
+    <section id="partners" class="pp-toolbar">
+      <div class="pp-search">
+        <input id="pp-search" type="search" placeholder="Search partners or categories…" autocomplete="off" />
+      </div>
 
-    <section id="compliance" class="compliance">
-      <h2>Compliance Notes</h2>
-      <ul>
-        <li>FTC: affiliate disclosures must be clear &amp; conspicuous near the CTA.</li>
-        <li>GDPR/CPRA: honor user consent before non-essential cookies or tracking.</li>
-        <li>Sanctions: exclude embargoed/sanctioned jurisdictions.</li>
-      </ul>
+      <div class="pp-filters">
+        <div class="pp-filter">
+          <label>Region</label>
+          <div class="pp-chipset">
+            <label><input type="checkbox" class="pp-region" value="US" checked /> US</label>
+            <label><input type="checkbox" class="pp-region" value="EU" checked /> EU</label>
+            <label><input type="checkbox" class="pp-region" value="UK" checked /> UK</label>
+            <label><input type="checkbox" class="pp-region" value="APAC" checked /> APAC</label>
+          </div>
+        </div>
+
+        <div class="pp-filter">
+          <label>Vertical</label>
+          <select id="pp-vertical">
+            <option value="">All</option>
+          </select>
+        </div>
+
+        <div class="pp-filter">
+          <label>Payout model</label>
+          <select id="pp-payout">
+            <option value="">All</option>
+            <option value="recurring">Recurring</option>
+            <option value="one_time">One-time</option>
+            <option value="hybrid">Hybrid</option>
+          </select>
+        </div>
+
+        <button id="pp-reset" class="btn ghost">Reset</button>
+      </div>
     </section>
+
+    <!-- Inline counts -->
+    <section class="pp-stats-inline">
+      <span id="pp-count-total">0</span> programs
+      · <span id="pp-count-vert">0</span> categories
+      · <span id="pp-count-cover">0%</span> global coverage
+    </section>
+
+    <!-- Grid -->
+    <section id="pp-grid" class="pp-grid"></section>
+
+    <!-- Modal -->
+    <div id="pp-modal" class="pp-modal hidden" aria-hidden="true">
+      <div class="pp-modal__panel" role="dialog" aria-modal="true" aria-labelledby="pp-m-name">
+        <button id="pp-modal-close" class="pp-modal__close" aria-label="Close">×</button>
+        <h3 id="pp-m-name"></h3>
+        <p class="pp-sub"><span id="pp-m-verts"></span></p>
+
+        <div class="pp-meta">
+          <div><strong>Payout:</strong> <span id="pp-m-payout"></span></div>
+          <div><strong>Range:</strong> <span id="pp-m-range"></span></div>
+          <div><strong>Coverage:</strong> <span id="pp-m-geo"></span></div>
+          <div><strong>Automation:</strong> <span id="pp-m-score"></span>/5</div>
+        </div>
+
+        <div class="pp-links">
+          <a id="pp-m-docs" target="_blank" rel="noopener">Integration Docs</a>
+          <a id="pp-m-source" target="_blank" rel="noopener">Program Source</a>
+          <button id="pp-m-copy" class="btn">Copy Link Template</button>
+        </div>
+
+        <details class="pp-builder">
+          <summary>Build a compliant deep link</summary>
+          <div class="pp-builder__row">
+            <label>AFF_ID</label>
+            <input id="pp-aff" type="text" placeholder="your_aff_id" />
+          </div>
+          <div class="pp-builder__row">
+            <label>Destination URL</label>
+            <input id="pp-dest" type="url" placeholder="https://example.com/landing" />
+          </div>
+          <div class="pp-builder__row">
+            <label>Result</label>
+            <input id="pp-out" type="text" readonly />
+          </div>
+          <button id="pp-build" class="btn">Build</button>
+        </details>
+
+        <small class="pp-legal">FTC: outbound links can auto-append clear affiliate disclosure.</small>
+      </div>
+    </div>
   </main>
 
-  <footer>© 2025 PartnerPeak — Built for automated affiliate growth.</footer>
+  <footer class="site-footer">
+    <div class="wrap">
+      <small>© 2025 PartnerPeak — Built for automated affiliate growth.</small>
+    </div>
+  </footer>
 
-  <script src="../scripts/partners.js"></script>
+  <script src="scripts/app.js"></script>
 </body>
 </html>
