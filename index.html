@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PartnerPeak</title>
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">🔵 PartnerPeak</div>
-    <nav>
+  <header class="site-header">
+    <div class="brand">🔵 PartnerPeak</div>
+    <nav class="top-nav">
       <a href="#">Partners</a>
       <a href="#">Disclosure</a>
       <a href="#">Privacy</a>
@@ -19,26 +19,75 @@
 
   <main>
     <section class="hero">
-      <h1>Zero-Touch Referral Engine<br>for High-Ticket SaaS & Business Tools</h1>
-      <p>
-        Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates—
-        engineered to run on autopilot.
-      </p>
-      <button onclick="location.href='#partners'">Explore Partners</button>
-      <button>Compliance & Policies</button>
+      <div class="hero-copy">
+        <h1>
+          Zero-Touch Referral Engine<br />
+          for High-Ticket SaaS & Business Tools
+        </h1>
+        <p class="lede">
+          Ranked partners, automatic geo-compliance, FTC/GDPR disclosures, and real-time catalog updates—
+          engineered to run on autopilot.
+        </p>
+        <div class="cta-row">
+          <a class="btn primary" href="#partners">Explore Partners</a>
+          <a class="btn" href="#">Compliance & Policies</a>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="pill-row">
+          <span class="pill">Automation-first</span>
+          <span class="pill">Global</span>
+          <span class="pill pill-green">Low Risk</span>
+        </div>
+        <div class="totals">
+          <div class="total">
+            <div class="num" id="usCount">0</div>
+            <div class="label">US-ready</div>
+          </div>
+          <div class="total">
+            <div class="num" id="euCount">0</div>
+            <div class="label">EU-ready</div>
+          </div>
+          <div class="total">
+            <div class="num" id="ukCount">0</div>
+            <div class="label">UK-ready</div>
+          </div>
+          <div class="total">
+            <div class="num" id="apacCount">0</div>
+            <div class="label">APAC-ready</div>
+          </div>
+        </div>
+        <p class="disclaimer">
+          All listings restricted to low-risk verticals and automation-friendly programs.
+        </p>
+      </div>
     </section>
 
-    <section id="stats">
-      <div class="stat"><span id="programCount">0</span> Programs in catalog</div>
-      <div class="stat"><span id="categoryCount">0</span> Categories covered</div>
-      <div class="stat"><span id="coveragePercent">0%</span> Global coverage</div>
-      <div class="stat"><span id="usCount">0</span> US-ready</div>
-      <div class="stat"><span id="euCount">0</span> EU-ready</div>
-      <div class="stat"><span id="ukCount">0</span> UK-ready</div>
-      <div class="stat"><span id="apacCount">0</span> APAC-ready</div>
+    <section class="kpis">
+      <div class="kpi">
+        <div class="kpi-num" id="programCount">0</div>
+        <div class="kpi-label">Programs in catalog</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num" id="categoryCount">0</div>
+        <div class="kpi-label">Categories covered</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num" id="coveragePercent">0%</div>
+        <div class="kpi-label">Global coverage</div>
+      </div>
+    </section>
+
+    <section id="partners" class="partners-note">
+      <p>Partners directory coming next. This homepage reads directly from <code>scripts/partners.data.js</code>.</p>
     </section>
   </main>
 
+  <footer class="site-footer">
+    <small>© 2025 PartnerPeak — Built for automated affiliate growth.</small>
+  </footer>
+
+  <!-- Order matters: data first, then app -->
   <script src="scripts/partners.data.js"></script>
   <script src="scripts/app.js"></script>
 </body>
